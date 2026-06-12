@@ -1,0 +1,82 @@
+{
+  "name": "@pwngh/plaid",
+  "version": "1.0.0",
+  "description": "Plaid integration for Remix applications.",
+  "author": "Preston Neal",
+  "license": "MIT",
+  "repository": "git+https://github.com/pwn-interests/plaid.git",
+  "exports": {
+    ".": null,
+    "./node": {
+      "import": "./dist/es/node/index.js",
+      "require": "./dist/node/index.js"
+    },
+    "./react": {
+      "import": "./dist/es/react/index.js",
+      "require": "./dist/react/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "bundle": "rollup -c",
+    "watch": "rollup -c -w",
+    "clean": "npx --yes rimraf dist && mkdir dist",
+    "build": "run-s clean lint bundle",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "pret": "prettier -c .",
+    "pret:fix": "prettier -w .",
+    "test": "node --test ./test/*.test.mjs",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
+    "@remix-run/node": ">=2.13.1",
+    "@remix-run/react": ">=2.13.1",
+    "react": ">=18.2.0",
+    "plaid": ">=20.0.0",
+    "react-plaid-link": ">=3.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.24.0",
+    "@eslint/compat": "^1.1.1",
+    "@remix-run/node": "^2.13.1",
+    "@remix-run/react": "^2.13.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/react": "^18.2.65",
+    "babel-plugin-pure-annotations": "^0.1.2",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-hooks-addons": "^0.3.1",
+    "globals": "^15.1.0",
+    "npm-run-all": "^4.1.5",
+    "plaid": "^20.0.0",
+    "prettier": "^3.2.5",
+    "react": "^18.2.0",
+    "react-plaid-link": "^3.5.1",
+    "rollup": "^4.12.1"
+  },
+  "overrides": {
+    "eslint-plugin-react-hooks": {
+      "eslint": "$eslint"
+    }
+  },
+  "keywords": [
+    "plaid",
+    "remix",
+    "react",
+    "banking"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
