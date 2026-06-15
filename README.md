@@ -135,4 +135,4 @@ All server methods return consistent error structures that can be easily handled
 
 ### License
 
-[MIT Licensed](./LICENSE) © Preston Neal
+MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Preston Neal.
