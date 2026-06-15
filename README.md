@@ -14,7 +14,7 @@ This package provides a structured way to interact with Plaid in both Node.js an
 
 Install from GitHub:
 
-> npm install git+https://github.com/pwn-interests/plaid.git
+> npm install git+https://github.com/pwngh/plaid.git
 
 
 ### Server-Side Features (<small>`@pwngh/plaid/node`</small>)
