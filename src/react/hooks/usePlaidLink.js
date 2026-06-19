@@ -2,6 +2,15 @@ import { useCallback } from 'react';
 import { usePlaidLink as useOfficialPlaidLink } from 'react-plaid-link';
 import { handlePlaidError } from '../../shared/utils';
 
+/** Invoke a consumer callback (if any), rethrowing failures with a normalized, user-facing message. */
+const callOrRethrow = async (cb, args) => {
+  try {
+    if(cb) await cb(...args);
+  } catch(error) {
+    throw new Error(handlePlaidError(error).message);
+  }
+};
+
 /**
  * Wrap `react-plaid-link`'s `usePlaidLink` with normalized error handling.
  *
@@ -22,27 +31,15 @@ export const usePlaidLink = ({
   onExit,
   ...config
 }) => {
-  const handleSuccess = useCallback(async (publicToken, metadata) => {
-    try {
-      if(onSuccess) {
-        await onSuccess(publicToken, metadata);
-      }
-    } catch(error) {
-      const { message } = handlePlaidError(error);
-      throw new Error(message);
-    }
-  }, [onSuccess]);
+  const handleSuccess = useCallback(
+    (publicToken, metadata) => callOrRethrow(onSuccess, [publicToken, metadata]),
+    [onSuccess],
+  );
 
-  const handleExit = useCallback(async (error, metadata) => {
-    try {
-      if(onExit) {
-        await onExit(error, metadata);
-      }
-    } catch(error) {
-      const { message } = handlePlaidError(error);
-      throw new Error(message);
-    }
-  }, [onExit]);
+  const handleExit = useCallback(
+    (error, metadata) => callOrRethrow(onExit, [error, metadata]),
+    [onExit],
+  );
 
   return useOfficialPlaidLink({
     token,

@@ -35,10 +35,11 @@ export const PlaidLink = ({
 
   return (
     <button
+      type="button"
+      {...props}
       onClick={() => open()}
       disabled={!ready}
       className={`px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
-      {...props}
     >
       {children || 'Connect Bank Account'}
     </button>

@@ -17,12 +17,14 @@ const banner = `/**
  */
  `;
 
-const sharedConfig = {
+/**
+ * @type {import('rollup').RollupOptions}
+ */
+export default {
   external: [
     'react',
     'react/jsx-runtime',
     'react/jsx-dev-runtime',
-    'prop-types',
     'plaid',
     '@remix-run/node',
     '@remix-run/react',
@@ -43,39 +45,44 @@ const sharedConfig = {
     propertyReadSideEffects: false,
     tryCatchDeoptimization: false
   },
+  onwarn(warning, warn) {
+    // Skip certain warnings
+    if (warning.code === 'THIS_IS_UNDEFINED') return;
+
+    // Use default warning for everything else
+    warn(warning);
+  },
+  input: {
+    'node/index': 'src/node/index.js',
+    'react/index': 'src/react/index.js'
+  },
+  output: [
+    {
+      dir: 'dist',
+      format: 'cjs',
+      interop: 'auto',
+      banner,
+      exports: 'named'
+    },
+    {
+      dir: 'dist/es',
+      format: 'es',
+      preserveModules: true,
+      banner,
+      // The package root is CommonJS, so mark the ESM build as ESM — without
+      // this Node parses these .js files as CJS (SyntaxError on Node 20.0-20.9).
+      plugins: [
+        {
+          name: 'emit-esm-package-json',
+          generateBundle() {
+            this.emitFile({
+              type: 'asset',
+              fileName: 'package.json',
+              source: '{ "type": "module" }\n'
+            });
+          }
+        }
+      ]
+    }
+  ]
 };
-
-/**
- * @type {import('rollup').RollupOptions[]}
- */
-export default [
-  {
-    ...sharedConfig,
-    onwarn(warning, warn) {
-      // Skip certain warnings
-      if (warning.code === 'THIS_IS_UNDEFINED') return;
-
-      // Use default warning for everything else
-      warn(warning);
-    },
-    input: {
-      'node/index': 'src/node/index.js',
-      'react/index': 'src/react/index.js'
-    },
-    output: [
-      {
-        dir: 'dist',
-        format: 'cjs',
-        interop: 'auto',
-        banner,
-        exports: 'named'
-      },
-      {
-        dir: 'dist/es',
-        format: 'es',
-        preserveModules: true,
-        banner
-      }
-    ]
-  }
-];

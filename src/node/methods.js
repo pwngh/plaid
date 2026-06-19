@@ -1,4 +1,4 @@
-import { handlePlaidError } from '../shared/utils';
+import { handlePlaidError } from '../shared/utils.js';
 
 /**
  * Error thrown by every method in this module when a Plaid call fails.
@@ -136,16 +136,17 @@ export const getIdentity = async (client, accessToken) =>
  *
  * @param {import('plaid').PlaidApi} client - Client from `createPlaidClient`.
  * @param {string} [institutionId] - Plaid institution ID (`ins_*`); `null`/`undefined` short-circuits to `null` without calling Plaid.
+ * @param {string[]} [countryCodes=['US']] - ISO 3166-1 alpha-2 country codes the institution was created under; must include the item's country.
  * @returns {Promise<import('plaid').InstitutionsGetByIdResponse | null>} Resolves with the `institution`, or `null` when no ID was given.
  * @throws {PlaidIntegrationError} When the Plaid request fails.
  */
-export const getInstitution = async (client, institutionId) => {
+export const getInstitution = async (client, institutionId, countryCodes = ['US']) => {
   if(institutionId == null) {
     return null;
   }
   return callPlaid(() => client.institutionsGetById({
     institution_id: institutionId,
-    country_codes: ['US'],
+    country_codes: countryCodes,
   }));
 };
 

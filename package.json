@@ -4,7 +4,7 @@
   "description": "Plaid integration for Remix applications.",
   "author": "Preston Neal",
   "license": "MIT",
-  "repository": "git+https://github.com/pwn-interests/plaid.git",
+  "repository": "git+https://github.com/pwngh/plaid.git",
   "exports": {
     ".": null,
     "./node": {
@@ -24,7 +24,7 @@
   "scripts": {
     "bundle": "rollup -c",
     "watch": "rollup -c -w",
-    "clean": "npx --yes rimraf dist && mkdir dist",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "build": "run-s clean lint bundle",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -49,10 +49,8 @@
     "@remix-run/react": "^2.13.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/react": "^18.2.65",
     "babel-plugin-pure-annotations": "^0.1.2",
-    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "eslint": "^8.38.0",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",

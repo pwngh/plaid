@@ -63,6 +63,22 @@ describe('handlePlaidError', () => {
         code: ERROR_CODES.INSTITUTION_NOT_RESPONDING,
       });
     });
+
+    it('routes a "down" institution message to INSTITUTION_DOWN', () => {
+      const error = new Error('Institution is temporarily down');
+      assert.deepStrictEqual(handlePlaidError(error), {
+        message: ERROR_MESSAGES[ERROR_CODES.INSTITUTION_DOWN],
+        code: ERROR_CODES.INSTITUTION_DOWN,
+      });
+    });
+
+    it('routes a "no longer supported" message to INSTITUTION_NO_LONGER_SUPPORTED', () => {
+      const error = new Error('This institution is no longer supported');
+      assert.deepStrictEqual(handlePlaidError(error), {
+        message: ERROR_MESSAGES[ERROR_CODES.INSTITUTION_NO_LONGER_SUPPORTED],
+        code: ERROR_CODES.INSTITUTION_NO_LONGER_SUPPORTED,
+      });
+    });
   });
 
   describe('fallback', () => {

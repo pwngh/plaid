@@ -40,7 +40,9 @@ export const usePlaidAccounts = ({ action = '/api/plaid/accounts' } = {}) => {
 
   return {
     accounts: fetcher.data?.accounts ?? [],
-    isLoading: fetcher.state === 'submitting' || fetcher.state === 'loading',
+    // Treat the pre-first-response idle phase as loading so the empty state
+    // doesn't flash before the on-mount fetch starts.
+    isLoading: fetcher.state !== 'idle' || fetcher.data === undefined,
     error,
     refresh,
   };

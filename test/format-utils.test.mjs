@@ -22,6 +22,18 @@ describe('formatCurrency', () => {
     assert.strictEqual(formatCurrency(null), '$0.00');
     assert.strictEqual(formatCurrency(undefined), '$0.00');
   });
+
+  it('formats other currencies when given an ISO code', () => {
+    assert.strictEqual(formatCurrency(1234.5, 'EUR'), '€1,234.50');
+    assert.strictEqual(formatCurrency(1000, 'GBP'), '£1,000.00');
+  });
+
+  it('honors the locale argument', () => {
+    assert.notStrictEqual(
+      formatCurrency(1234.5, 'EUR', 'de-DE'),
+      formatCurrency(1234.5, 'EUR', 'en-US')
+    );
+  });
 });
 
 describe('formatAccountMask', () => {

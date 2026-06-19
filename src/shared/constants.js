@@ -14,22 +14,6 @@ export const ACCOUNT_TYPE = {
   OTHER: 'other',
 };
 
-/** Common Plaid account subtypes, as returned in `account.subtype`. */
-export const ACCOUNT_SUBTYPE = {
-  CHECKING: 'checking',
-  SAVINGS: 'savings',
-  CREDIT_CARD: 'credit card',
-  LINE_OF_CREDIT: 'line of credit',
-  MORTGAGE: 'mortgage',
-  STUDENT: 'student',
-  AUTO: 'auto',
-  BROKERAGE: 'brokerage',
-  IRA: 'ira',
-  '401k': '401k',
-  '403b': '403b',
-  '529': '529',
-};
-
 /** Plaid error codes that `handlePlaidError` maps to a user-facing message. */
 export const ERROR_CODES = {
   INVALID_ACCESS_TOKEN: 'INVALID_ACCESS_TOKEN',

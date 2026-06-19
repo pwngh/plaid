@@ -13,7 +13,7 @@ import {
  * @property {string} name
  * @property {string} [official_name]
  * @property {string} type
- * @property {{ current: number }} balances
+ * @property {{ current?: number, iso_currency_code?: string, unofficial_currency_code?: string }} [balances]
  * @property {string} [mask]
  */
 
@@ -26,7 +26,7 @@ import {
  * contract). Failed loads render the normalized error with a retry button.
  *
  * @param {Object} props
- * @param {string} [props.action='/api/plaid/accounts'] - Remix action route the accounts are fetched from.
+ * @param {string} [props.action] - Remix action route the accounts are fetched from. Defaults to `/api/plaid/accounts` (via `usePlaidAccounts`).
  * @param {(account: PlaidAccount) => void} [props.onAccountSelect] - Called with the account the user clicks.
  * @param {string} [props.className] - Classes appended to the list container.
  */
@@ -36,12 +36,14 @@ export const PlaidAccountsList = ({
   className = '',
 }) => {
   const { accounts, isLoading, error, refresh } = usePlaidAccounts({ action });
+  const interactive = typeof onAccountSelect === 'function';
 
   if(error) {
     return (
       <div className="text-center text-red-600 py-4">
         {error}
         <button
+          type="button"
           onClick={refresh}
           className="ml-2 text-blue-600 hover:underline"
         >
@@ -53,8 +55,13 @@ export const PlaidAccountsList = ({
 
   if(isLoading) {
     return (
-      <div className="flex justify-center items-center py-8">
+      <div
+        className="flex justify-center items-center py-8"
+        role="status"
+        aria-label="Loading accounts"
+      >
         <div
+          aria-hidden="true"
           className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"/>
       </div>
     );
@@ -65,8 +72,21 @@ export const PlaidAccountsList = ({
       {accounts.map((account) => (
         <div
           key={account.account_id}
-          className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition duration-150"
-          onClick={() => onAccountSelect?.(account)}
+          className={`p-4 border rounded-lg transition duration-150${
+            interactive ? ' hover:bg-gray-50 cursor-pointer' : ''
+          }`}
+          {...(interactive && {
+            role: 'button',
+            tabIndex: 0,
+            'aria-label': account.name,
+            onClick: () => onAccountSelect(account),
+            onKeyDown: (event) => {
+              if(event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onAccountSelect(account);
+              }
+            },
+          })}
         >
           <div className="flex justify-between items-center">
             <div>
@@ -78,7 +98,12 @@ export const PlaidAccountsList = ({
             </div>
             <div className="text-right">
               <p className="font-medium">
-                {formatCurrency(account.balances.current)}
+                {formatCurrency(
+                  account.balances?.current,
+                  account.balances?.iso_currency_code ??
+                    account.balances?.unofficial_currency_code ??
+                    undefined,
+                )}
               </p>
               <p className="text-sm text-gray-500">
                 {formatAccountMask(account.mask)}

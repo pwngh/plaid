@@ -1,15 +1,17 @@
 import { ACCOUNT_TYPE, ERROR_CODES, ERROR_MESSAGES } from './constants.js';
 
 /**
- * Format an amount as US dollars, e.g. `1234.5` becomes `"$1,234.50"`.
+ * Format an amount as a localized currency string, e.g. `1234.5` becomes `"$1,234.50"`.
  *
- * @param {number} [amount] - Dollar amount; `null`/`undefined` format as `$0.00`.
- * @returns {string} Localized USD currency string.
+ * @param {number} [amount] - Amount; `null`/`undefined` format as zero.
+ * @param {string} [currency='USD'] - ISO 4217 currency code (e.g. Plaid's `balances.iso_currency_code`).
+ * @param {string} [locale='en-US'] - BCP 47 locale tag for grouping and symbol placement.
+ * @returns {string} Localized currency string.
  */
-export const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-US', {
+export const formatCurrency = (amount, currency = 'USD', locale = 'en-US') => {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'USD',
+    currency,
     minimumFractionDigits: 2,
   }).format(amount || 0);
 };
@@ -80,11 +82,18 @@ export const handlePlaidError = (error) => {
     };
   }
 
-  if(errorMessage.includes('institution')) {
+  if(errorMessage.includes('no longer supported')) {
     return {
-      message: ERROR_MESSAGES[ERROR_CODES.INSTITUTION_NOT_RESPONDING],
-      code: ERROR_CODES.INSTITUTION_NOT_RESPONDING,
+      message: ERROR_MESSAGES[ERROR_CODES.INSTITUTION_NO_LONGER_SUPPORTED],
+      code: ERROR_CODES.INSTITUTION_NO_LONGER_SUPPORTED,
     };
+  }
+
+  if(errorMessage.includes('institution')) {
+    const code = errorMessage.includes('down')
+      ? ERROR_CODES.INSTITUTION_DOWN
+      : ERROR_CODES.INSTITUTION_NOT_RESPONDING;
+    return { message: ERROR_MESSAGES[code], code };
   }
 
   return {

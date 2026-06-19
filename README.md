@@ -27,7 +27,7 @@ Install from GitHub:
 
 ### Server-Side Usage
 
-```node
+```js
 import { createPlaidClient, getAccounts } from '@pwngh/plaid/node';
 
 // Initialize once
@@ -39,7 +39,7 @@ const client = createPlaidClient({
 // Use in your loader/action
 export async function loader() {
  const { accounts } = await getAccounts(client, accessToken);
- return json({ accounts });
+ return Response.json({ accounts });
 }
 ```
 
@@ -86,7 +86,6 @@ const { accounts, isLoading, error, refresh } = usePlaidAccounts({
 
 ```jsx
 // app/routes/api.plaid.accounts.jsx
-import { json } from '@remix-run/node';
 import { createPlaidClient, getAccounts } from '@pwngh/plaid/node';
 import { getSession } from '~/sessions.server';
 import { getPlaidAccessTokenForUser } from '~/models/plaid.server';
@@ -101,7 +100,7 @@ export async function action({ request }) {
   const userId = session.get('userId');
 
   if (!userId) {
-    return json({ error: { code: 'UNAUTHORIZED' } }, { status: 401 });
+    return Response.json({ error: { code: 'UNAUTHORIZED' } }, { status: 401 });
   }
 
   // Retrieve the Plaid access token server-side (session, database, etc.)
@@ -109,9 +108,9 @@ export async function action({ request }) {
 
   try {
     const { accounts } = await getAccounts(client, accessToken);
-    return json({ accounts });
+    return Response.json({ accounts });
   } catch (error) {
-    return json(
+    return Response.json(
       { error: { code: error.code, message: error.message } },
       { status: 500 },
     );
@@ -131,6 +130,7 @@ All server methods return consistent error structures that can be easily handled
 - Remix >= 2.13.1
 - React >= 18.2.0
 - Plaid >= 20.0.0
+- react-plaid-link >= 3.5.1 (peer dependency of the React entry)
 - Tailwind CSS (for the bundled components' styling)
 
 ### License
